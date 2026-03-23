@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atividade — Combinando NÃO, E e OU</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --primary: #0369a1;
+    --primary-light: #e0f2fe;
+    --easy: #16a34a;
+    --easy-light: #dcfce7;
+    --easy-border: #86efac;
+    --medium: #d97706;
+    --medium-light: #fef3c7;
+    --medium-border: #fcd34d;
+    --hard: #dc2626;
+    --hard-light: #fee2e2;
+    --hard-border: #fca5a5;
+    --correct: #16a34a;
+    --correct-light: #dcfce7;
+    --wrong: #dc2626;
+    --wrong-light: #fee2e2;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+    background-image:
+      radial-gradient(circle at 10% 10%, #bae6fd 0%, transparent 35%),
+      radial-gradient(circle at 90% 90%, #bbf7d0 0%, transparent 35%),
+      radial-gradient(circle at 90% 10%, #fde68a 0%, transparent 25%);
+  }
+
+  header { text-align: center; margin-bottom: 28px; }
+
+  .badge {
+    display: inline-block;
+    background: var(--primary);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 999px;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(24px, 5vw, 38px);
+    color: var(--primary);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 540px;
+    margin: 0 auto 10px;
+    font-weight: 600;
+  }
+
+  /* Cartões de referência rápida */
+  .ref-grid {
+    max-width: 680px;
+    margin: 0 auto 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .ref-card {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 10px;
+    text-align: center;
+    border: 2px solid var(--border);
+  }
+
+  .ref-card .ref-op {
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    margin-bottom: 6px;
+  }
+
+  .ref-card.nao .ref-op { color: #9333ea; }
+  .ref-card.e .ref-op { color: #2563eb; }
+  .ref-card.ou .ref-op { color: #ea580c; }
+
+  .ref-card .ref-regra {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* Níveis */
+  .nivel-titulo {
+    max-width: 680px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nivel-badge {
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+    padding: 5px 16px;
+    border-radius: 999px;
+    color: white;
+  }
+
+  .nivel-badge.facil { background: var(--easy); }
+  .nivel-badge.medio { background: var(--medium); }
+  .nivel-badge.dificil { background: var(--hard); }
+
+  .nivel-linha {
+    flex: 1;
+    height: 2px;
+    border-radius: 999px;
+  }
+
+  .nivel-linha.facil { background: var(--easy-border); }
+  .nivel-linha.medio { background: var(--medium-border); }
+  .nivel-linha.dificil { background: var(--hard-border); }
+
+  .nivel-desc {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+  }
+
+  /* Cards de questão */
+  .questions {
+    max-width: 680px;
+    margin: 0 auto 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    transition: border-color 0.3s;
+    border-left-width: 5px;
+  }
+
+  .question-card.facil { border-left-color: var(--easy); }
+  .question-card.medio { border-left-color: var(--medium); }
+  .question-card.dificil { border-left-color: var(--hard); }
+
+  .question-card.answered-correct { border-color: var(--correct); background: var(--correct-light); border-left-color: var(--correct); }
+  .question-card.answered-wrong { border-color: var(--wrong); background: var(--wrong-light); border-left-color: var(--wrong); }
+
+  .question-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .q-number {
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 14px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .q-number.facil { background: var(--easy); }
+  .q-number.medio { background: var(--medium); }
+  .q-number.dificil { background: var(--hard); }
+
+  .q-text {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.7;
+    flex: 1;
+  }
+
+  /* Passo a passo visual */
+  .passo-box {
+    background: #f8fafc;
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    line-height: 2.2;
+  }
+
+  .passo-box .passo-titulo {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+
+  .blank {
+    display: inline-block;
+    min-width: 72px;
+    height: 20px;
+    border-bottom: 2.5px solid #94a3b8;
+    border-radius: 2px;
+    background: transparent;
+    vertical-align: middle;
+    margin: 0 3px;
+  }
+
+  .op-nao {
+    color: #9333ea;
+    font-weight: 900;
+    background: #f3e8ff;
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .op-e {
+    color: #2563eb;
+    font-weight: 900;
+    background: #dbeafe;
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .op-ou {
+    color: #ea580c;
+    font-weight: 900;
+    background: #ffedd5;
+    padding: 1px 5px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .opt-btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 10px 20px;
+    border: 2.5px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.18s;
+    color: var(--text);
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  .opt-btn.selected { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+  .opt-btn.show-correct { background: var(--correct); border-color: var(--correct); color: white; }
+  .opt-btn.selected-wrong { background: var(--wrong); border-color: var(--wrong); color: white; }
+  .opt-btn:disabled { cursor: default; }
+
+  .feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+    line-height: 1.6;
+  }
+
+  .feedback.show { display: flex; }
+  .feedback.correct { background: #bbf7d0; color: #14532d; }
+  .feedback.wrong { background: #fecaca; color: #7f1d1d; }
+
+  /* Placar por nível */
+  .student-info {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    max-width: 680px;
+    margin: 0 auto 24px;
+  }
+
+  .field { flex: 1; min-width: 200px; }
+
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .field input {
+    width: 100%;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    background: white;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .field input:focus { border-color: var(--primary); }
+
+  .actions {
+    max-width: 680px;
+    margin: 8px auto 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .btn-check {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 40px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 18px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(3,105,161,0.3);
+  }
+
+  .btn-check:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(3,105,161,0.4); }
+  .btn-check:active { transform: translateY(0); }
+
+  .btn-reset {
+    background: transparent;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 28px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); }
+
+  .result-box {
+    display: none;
+    background: white;
+    border: 3px solid var(--primary);
+    border-radius: var(--radius);
+    padding: 24px;
+    text-align: center;
+    width: 100%;
+    animation: popIn 0.4s ease;
+  }
+
+  .result-box.show { display: block; }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .result-score {
+    font-family: 'Fredoka One', cursive;
+    font-size: 52px;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .result-label { font-size: 16px; font-weight: 800; color: var(--muted); margin-bottom: 14px; }
+
+  .nivel-scores {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+
+  .nivel-score-item {
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-family: 'Fredoka One', cursive;
+    font-size: 15px;
+    min-width: 110px;
+  }
+
+  .nivel-score-item.facil { background: var(--easy-light); color: var(--easy); border: 2px solid var(--easy-border); }
+  .nivel-score-item.medio { background: var(--medium-light); color: var(--medium); border: 2px solid var(--medium-border); }
+  .nivel-score-item.dificil { background: var(--hard-light); color: var(--hard); border: 2px solid var(--hard-border); }
+
+  .result-msg {
+    font-size: 15px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+
+  .stars { font-size: 30px; margin-bottom: 8px; }
+
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 999px;
+    height: 10px;
+    margin: 12px 0 4px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--primary);
+    transition: width 0.8s ease;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    padding: 20px 16px;
+    border-top: 2px solid #e2e8f0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 480px) {
+    .ref-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge">🖥️ Pensamento Computacional</div>
+  <h1>Combinando NÃO, E e OU</h1>
+  <p class="subtitle">Resolva as sentenças usando as três operações lógicas juntas. Atenção ao nível de cada questão!</p>
+</header>
+
+<!-- Referência rápida -->
+<div class="ref-grid">
+  <div class="ref-card nao">
+    <div class="ref-op">🔀 NÃO</div>
+    <div class="ref-regra">Inverte o valor<br>V → F &nbsp;|&nbsp; F → V</div>
+  </div>
+  <div class="ref-card e">
+    <div class="ref-op">🔗 E</div>
+    <div class="ref-regra">Verdadeiro só se<br><strong>as duas</strong> forem V</div>
+  </div>
+  <div class="ref-card ou">
+    <div class="ref-op">➕ OU</div>
+    <div class="ref-regra">Verdadeiro se<br><strong>pelo menos uma</strong> for V</div>
+  </div>
+</div>
+
+<div class="student-info">
+  <div class="field">
+    <label>Nome</label>
+    <input type="text" placeholder="Digite seu nome...">
+  </div>
+  <div class="field" style="max-width:180px">
+    <label>Data</label>
+    <input type="date">
+  </div>
+</div>
+
+<!-- FÁCIL -->
+<div class="nivel-titulo">
+  <span class="nivel-badge facil">⭐ Fácil</span>
+  <div class="nivel-linha facil"></div>
+  <span class="nivel-desc">Uma operação por vez</span>
+</div>
+<div class="questions" id="q-facil"></div>
+
+<!-- MÉDIO -->
+<div class="nivel-titulo">
+  <span class="nivel-badge medio">⭐⭐ Médio</span>
+  <div class="nivel-linha medio"></div>
+  <span class="nivel-desc">Duas operações combinadas</span>
+</div>
+<div class="questions" id="q-medio"></div>
+
+<!-- DIFÍCIL -->
+<div class="nivel-titulo">
+  <span class="nivel-badge dificil">⭐⭐⭐ Difícil</span>
+  <div class="nivel-linha dificil"></div>
+  <span class="nivel-desc">Três operações e parênteses</span>
+</div>
+<div class="questions" id="q-dificil"></div>
+
+<div class="actions">
+  <button class="btn-check" onclick="corrigir()">✅ Corrigir Atividade</button>
+  <div class="result-box" id="result"></div>
+  <button class="btn-reset" onclick="reiniciar()">🔄 Recomeçar</button>
+</div>
+
+<footer>
+  Material Pedagógico — Profª Adriana Bett Terebinto © 2026<br>
+  São Lourenço do Oeste — SC
+</footer>
+
+<script>
+const questoes = {
+  facil: [
+    {
+      id: 'f1',
+      texto: '<span class="op-nao">NÃO</span> (5 > 10)',
+      resposta: 'V',
+      passos: [
+        '1. Resolva o parêntese: 5 > 10 é <span class="blank"></span>',
+        '2. Aplique o NÃO: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '3. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! 5 > 10 é Falso. O NÃO inverteu para Verdadeiro.'
+    },
+    {
+      id: 'f2',
+      texto: '(3 < 7) <span class="op-e">E</span> (2 + 2 = 4)',
+      resposta: 'V',
+      passos: [
+        '1. Primeiro parêntese: 3 < 7 é <span class="blank"></span>',
+        '2. Segundo parêntese: 2 + 2 = 4 é <span class="blank"></span>',
+        '3. Aplique o E: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! 3 < 7 é V e 2+2=4 é V. No E, V E V = Verdadeiro.'
+    },
+    {
+      id: 'f3',
+      texto: '(Peixe voa) <span class="op-ou">OU</span> (Pássaro voa)',
+      resposta: 'V',
+      passos: [
+        '1. Primeiro parêntese: Peixe voa é <span class="blank"></span>',
+        '2. Segundo parêntese: Pássaro voa é <span class="blank"></span>',
+        '3. Aplique o OU: <span class="blank"></span> OU <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! Peixe voa é F, mas Pássaro voa é V. No OU, F OU V = Verdadeiro.'
+    },
+    {
+      id: 'f4',
+      texto: '(8 < 3) <span class="op-e">E</span> (1 + 1 = 2)',
+      resposta: 'F',
+      passos: [
+        '1. Primeiro parêntese: 8 < 3 é <span class="blank"></span>',
+        '2. Segundo parêntese: 1 + 1 = 2 é <span class="blank"></span>',
+        '3. Aplique o E: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '❌ Falso! 8 < 3 é F. No E, basta uma parte ser falsa para o resultado ser Falso.'
+    }
+  ],
+  medio: [
+    {
+      id: 'm1',
+      texto: '<span class="op-nao">NÃO</span> (5 > 6) <span class="op-e">E</span> (3 < 10)',
+      resposta: 'V',
+      passos: [
+        '1. Resolva os parênteses: 5 > 6 é <span class="blank"></span> &nbsp;|&nbsp; 3 < 10 é <span class="blank"></span>',
+        '2. Aplique o NÃO: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '3. Aplique o E: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! 5>6 é F → NÃO F = V. 3<10 é V. V E V = Verdadeiro.'
+    },
+    {
+      id: 'm2',
+      texto: '(2 + 2 = 5) <span class="op-ou">OU</span> <span class="op-nao">NÃO</span> (7 > 2)',
+      resposta: 'F',
+      passos: [
+        '1. Primeiro parêntese: 2 + 2 = 5 é <span class="blank"></span>',
+        '2. Segundo parêntese: 7 > 2 é <span class="blank"></span>',
+        '3. Aplique o NÃO: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '4. Aplique o OU: <span class="blank"></span> OU <span class="blank"></span> = <span class="blank"></span>',
+        '5. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '❌ Falso! 2+2=5 é F. 7>2 é V → NÃO V = F. F OU F = Falso.'
+    },
+    {
+      id: 'm3',
+      texto: '<span class="op-nao">NÃO</span> (gato late) <span class="op-ou">OU</span> (cachorro late)',
+      resposta: 'V',
+      passos: [
+        '1. Gato late é <span class="blank"></span>',
+        '2. Aplique o NÃO: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '3. Cachorro late é <span class="blank"></span>',
+        '4. Aplique o OU: <span class="blank"></span> OU <span class="blank"></span> = <span class="blank"></span>',
+        '5. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! Gato late é F → NÃO F = V. Cachorro late é V. V OU V = Verdadeiro.'
+    },
+    {
+      id: 'm4',
+      texto: '(10 > 1) <span class="op-e">E</span> <span class="op-nao">NÃO</span> (6 < 2)',
+      resposta: 'V',
+      passos: [
+        '1. Primeiro parêntese: 10 > 1 é <span class="blank"></span>',
+        '2. Segundo parêntese: 6 < 2 é <span class="blank"></span>',
+        '3. Aplique o NÃO: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '4. Aplique o E: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '5. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! 10>1 é V. 6<2 é F → NÃO F = V. V E V = Verdadeiro.'
+    }
+  ],
+  dificil: [
+    {
+      id: 'd1',
+      texto: '<span class="op-nao">NÃO</span> (4 > 8) <span class="op-e">E</span> (<span class="op-nao">NÃO</span> (5 = 3) <span class="op-ou">OU</span> (10 < 2))',
+      resposta: 'V',
+      passos: [
+        '1. Parênteses internos: 4 > 8 é <span class="blank"></span> &nbsp;|&nbsp; 5 = 3 é <span class="blank"></span> &nbsp;|&nbsp; 10 < 2 é <span class="blank"></span>',
+        '2. Aplique os NÃOs: NÃO <span class="blank"></span> = <span class="blank"></span> &nbsp;|&nbsp; NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '3. Resolva o OU interno: <span class="blank"></span> OU <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resolva o E final: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '5. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! 4>8=F → NÃO F=V. 5=3=F → NÃO F=V. 10<2=F. V OU F = V. V E V = Verdadeiro.'
+    },
+    {
+      id: 'd2',
+      texto: '(<span class="op-nao">NÃO</span> (3 = 3) <span class="op-ou">OU</span> (7 > 2)) <span class="op-e">E</span> (2 + 2 = 5)',
+      resposta: 'F',
+      passos: [
+        '1. Parênteses internos: 3 = 3 é <span class="blank"></span> &nbsp;|&nbsp; 7 > 2 é <span class="blank"></span> &nbsp;|&nbsp; 2+2=5 é <span class="blank"></span>',
+        '2. Aplique o NÃO: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '3. Resolva o OU: <span class="blank"></span> OU <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resolva o E final: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '5. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '❌ Falso! 3=3=V → NÃO V=F. 7>2=V. F OU V=V. Mas 2+2=5 é F. V E F = Falso.'
+    },
+    {
+      id: 'd3',
+      texto: '<span class="op-nao">NÃO</span> ((5 > 1) <span class="op-e">E</span> (3 < 10))',
+      resposta: 'F',
+      passos: [
+        '1. Parênteses internos: 5 > 1 é <span class="blank"></span> &nbsp;|&nbsp; 3 < 10 é <span class="blank"></span>',
+        '2. Resolva o E interno: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '3. Aplique o NÃO externo: NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '❌ Falso! 5>1=V e 3<10=V. V E V = V. NÃO V = Falso.'
+    },
+    {
+      id: 'd4',
+      texto: '(<span class="op-nao">NÃO</span> (8 < 3) <span class="op-ou">OU</span> <span class="op-nao">NÃO</span> (4 > 10)) <span class="op-e">E</span> (1 + 1 = 2)',
+      resposta: 'V',
+      passos: [
+        '1. Parênteses internos: 8 < 3 é <span class="blank"></span> &nbsp;|&nbsp; 4 > 10 é <span class="blank"></span> &nbsp;|&nbsp; 1+1=2 é <span class="blank"></span>',
+        '2. Aplique os NÃOs: NÃO <span class="blank"></span> = <span class="blank"></span> &nbsp;|&nbsp; NÃO <span class="blank"></span> = <span class="blank"></span>',
+        '3. Resolva o OU: <span class="blank"></span> OU <span class="blank"></span> = <span class="blank"></span>',
+        '4. Resolva o E final: <span class="blank"></span> E <span class="blank"></span> = <span class="blank"></span>',
+        '5. Resultado final: <span class="blank"></span>'
+      ],
+      explicacao: '✅ Verdadeiro! 8<3=F → NÃO F=V. 4>10=F → NÃO F=V. V OU V=V. V E V = Verdadeiro.'
+    }
+  ]
+};
+
+const respostas = {};
+
+function renderNivel(nivel, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  questoes[nivel].forEach((q, i) => {
+    const globalN = nivel === 'facil' ? i+1 : nivel === 'medio' ? i+5 : i+9;
+    const passos = q.passos.map(p => `<div>${p}</div>`).join('');
+    container.innerHTML += `
+      <div class="question-card ${nivel}" id="card-${q.id}">
+        <div class="question-header">
+          <div class="q-number ${nivel}">${globalN}</div>
+          <div class="q-text">${q.texto}</div>
+        </div>
+        <div class="passo-box">
+          <div class="passo-titulo">✏️ Preencha os espaços e resolva passo a passo antes de responder:</div>
+          ${passos}
+        </div>
+        <div class="options">
+          <button class="opt-btn" id="btn-V-${q.id}" onclick="selecionar('${q.id}', 'V')">✔ Verdadeiro</button>
+          <button class="opt-btn" id="btn-F-${q.id}" onclick="selecionar('${q.id}', 'F')">✘ Falso</button>
+        </div>
+        <div class="feedback" id="feedback-${q.id}"></div>
+      </div>`;
+  });
+}
+
+function selecionar(id, valor) {
+  if (document.getElementById(`btn-V-${id}`).disabled) return;
+  respostas[id] = valor;
+  const btnV = document.getElementById(`btn-V-${id}`);
+  const btnF = document.getElementById(`btn-F-${id}`);
+  btnV.className = 'opt-btn' + (valor === 'V' ? ' selected' : '');
+  btnF.className = 'opt-btn' + (valor === 'F' ? ' selected' : '');
+}
+
+function corrigir() {
+  let totalAcertos = 0;
+  const acertosPorNivel = { facil: 0, medio: 0, dificil: 0 };
+
+  ['facil', 'medio', 'dificil'].forEach(nivel => {
+    questoes[nivel].forEach(q => {
+      const card = document.getElementById(`card-${q.id}`);
+      const btnV = document.getElementById(`btn-V-${q.id}`);
+      const btnF = document.getElementById(`btn-F-${q.id}`);
+      const feedback = document.getElementById(`feedback-${q.id}`);
+      const resp = respostas[q.id];
+
+      btnV.disabled = true; btnF.disabled = true;
+      btnV.className = 'opt-btn'; btnF.className = 'opt-btn';
+
+      if (!resp) {
+        feedback.className = 'feedback show wrong';
+        feedback.innerHTML = '<div>⚠️ Você não respondeu esta questão.</div>';
+        card.className = `question-card answered-wrong`;
+        return;
+      }
+
+      const correto = resp === q.resposta;
+      if (correto) { totalAcertos++; acertosPorNivel[nivel]++; }
+
+      document.getElementById(`btn-${q.resposta}-${q.id}`).classList.add('show-correct');
+      if (!correto) document.getElementById(`btn-${resp}-${q.id}`).classList.add('selected-wrong');
+
+      feedback.className = `feedback show ${correto ? 'correct' : 'wrong'}`;
+      feedback.innerHTML = `<div>${q.explicacao}</div>`;
+      card.className = `question-card answered-${correto ? 'correct' : 'wrong'}`;
+    });
+  });
+
+  const total = 12;
+  const pct = Math.round((totalAcertos / total) * 100);
+  const emoji = totalAcertos <= 4 ? '😕' : totalAcertos <= 7 ? '🙂' : totalAcertos <= 10 ? '😊' : '🌟';
+  const msg = totalAcertos <= 4 ? 'Continue praticando, você consegue!'
+    : totalAcertos <= 7 ? 'Bom trabalho! Revise as questões erradas.'
+    : totalAcertos <= 10 ? 'Muito bem! Você está dominando a lógica!'
+    : 'Parabéns! Você é um mestre da lógica! 🏆';
+  const cor = totalAcertos <= 4 ? '#fee2e2' : totalAcertos <= 7 ? '#fef3c7' : '#dcfce7';
+  const corText = totalAcertos <= 4 ? '#7f1d1d' : totalAcertos <= 7 ? '#92400e' : '#14532d';
+
+  const result = document.getElementById('result');
+  result.className = 'result-box show';
+  result.innerHTML = `
+    <div class="stars">${emoji}</div>
+    <div class="result-score">${totalAcertos}/${total}</div>
+    <div class="result-label">questões corretas</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:0%" id="bar"></div></div>
+    <div style="font-size:13px;color:var(--muted);font-weight:700;margin-bottom:14px">${pct}% de aproveitamento</div>
+    <div class="nivel-scores">
+      <div class="nivel-score-item facil">⭐ Fácil<br>${acertosPorNivel.facil}/4</div>
+      <div class="nivel-score-item medio">⭐⭐ Médio<br>${acertosPorNivel.medio}/4</div>
+      <div class="nivel-score-item dificil">⭐⭐⭐ Difícil<br>${acertosPorNivel.dificil}/4</div>
+    </div>
+    <div class="result-msg" style="background:${cor};color:${corText}">${msg}</div>`;
+
+  setTimeout(() => { document.getElementById('bar').style.width = pct + '%'; }, 100);
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function reiniciar() {
+  Object.keys(respostas).forEach(k => delete respostas[k]);
+  document.getElementById('result').className = 'result-box';
+  renderNivel('facil', 'q-facil');
+  renderNivel('medio', 'q-medio');
+  renderNivel('dificil', 'q-dificil');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+renderNivel('facil', 'q-facil');
+renderNivel('medio', 'q-medio');
+renderNivel('dificil', 'q-dificil');
+</script>
+</body>
+</html>
